@@ -15,8 +15,8 @@ import { TokenPayload } from './interface/token.interface';
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
