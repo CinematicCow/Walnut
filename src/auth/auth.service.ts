@@ -37,7 +37,7 @@ export class AuthService {
 
   async getAuthenticatedUser(loginUserDto: LoginUserDto): Promise<User> {
     try {
-      console.log(loginUserDto);
+      console.log(`called from auth service`, loginUserDto);
       const user = await this.userService.findByEmail(loginUserDto.email);
       console.log(user);
       await this.checkPassword(loginUserDto.password, user.password);

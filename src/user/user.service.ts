@@ -23,7 +23,7 @@ export class UserService {
   async findByID(id: string): Promise<User> {
     try {
       const user = await this.userRepository.findOneOrFail(id);
-      return { ...user, password: undefined };
+      return user;
     } catch (err) {
       throw new NotFoundException();
     }
@@ -34,7 +34,8 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User with this email does not exist');
     }
-    return { ...user, password: undefined };
+    console.log(user);
+    return user;
   }
 
   async remove(id: string) {
