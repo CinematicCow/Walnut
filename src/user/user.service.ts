@@ -34,7 +34,6 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User with this email does not exist');
     }
-    console.log(user);
     return user;
   }
 

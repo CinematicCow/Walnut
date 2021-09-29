@@ -8,7 +8,7 @@ import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import * as bcrypt from 'bcrypt';
-import { LoginUserDto } from './dto/login-user.dto';
+// import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './interface/token.interface';
 
@@ -35,13 +35,10 @@ export class AuthService {
     }
   }
 
-  async getAuthenticatedUser(loginUserDto: LoginUserDto): Promise<User> {
+  async getAuthenticatedUser(email: string, password: string): Promise<User> {
     try {
-      console.log(`called from auth service`, loginUserDto);
-      const user = await this.userService.findByEmail(loginUserDto.email);
-      console.log(user);
-      await this.checkPassword(loginUserDto.password, user.password);
-      console.log('check pass called');
+      const user = await this.userService.findByEmail(email);
+      await this.checkPassword(password, user.password);
       return { ...user, password: undefined };
     } catch (err) {
       throw new UnauthorizedException('Invalid Credential');
@@ -53,7 +50,6 @@ export class AuthService {
     hashedPass: string,
   ): Promise<boolean> {
     const isPassMatch = await bcrypt.compare(pass, hashedPass);
-    console.log(isPassMatch);
     if (!isPassMatch) throw new UnauthorizedException('Invalid Credentials');
     return true;
   }
