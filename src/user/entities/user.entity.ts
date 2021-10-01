@@ -31,7 +31,7 @@ export class User {
   password: string;
 
   @BeforeInsert()
-  hashPassword() {
+  hashPassword?() {
     this.password = bcrypt.hashSync(this.password, 10);
   }
 }
