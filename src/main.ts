@@ -27,7 +27,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('/', app, document);
+  SwaggerModule.setup('api', app, document);
 
   app.use(cookieParser());
   await app.listen(3000);
