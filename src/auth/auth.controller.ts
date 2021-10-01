@@ -39,20 +39,22 @@ export class AuthController {
   @ApiOkResponse({ type: User })
   @UseGuards(LocalAuthenticationGuard)
   @Post('login')
-  async login(
-    @Req() req: RequestWithUser,
-    @Res() res: Response,
-  ): Promise<User> {
+  async login(@Req() req: RequestWithUser, @Res() res: Response) {
     const user = req.user;
-    const cookie = this.authService.getCookieWithJwt(user.id);
-    res.setHeader('Set-Cookie', cookie);
-    return { ...user, password: undefined };
+    // console.log(user);
+    const token = this.authService.getToken(user.id);
+    const data = { ...user, password: undefined };
+    res
+      .cookie('authJwt', token, {
+        httpOnly: true,
+        maxAge: parseInt(process.env.JWT_SECRET_TIME),
+      })
+      .json(data);
   }
 
   @Post('logout')
   async logout(@Res() res: Response) {
-    const cookie = this.authService.getCookieForLogout();
-    res.setHeader('Set-Cookie', cookie);
+    res.clearCookie('authJwt');
     return res.sendStatus(200);
   }
 
@@ -60,6 +62,7 @@ export class AuthController {
   @Get()
   auth(@Res() req: RequestWithUser) {
     const user = req.user;
+    console.log(req.cookies.authJwt);
     return { ...user, password: undefined };
   }
 }

@@ -11,7 +11,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
-          return req?.cookies?.Authentication;
+          const data = req?.cookies?.authJwt;
+          // console.log(data);
+          if (!data) return null;
+          console.log(data);
+          return data;
         },
       ]),
       secretOrKey: process.env.JWT_SECRET,
@@ -19,6 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: TokenPayload) {
+    console.log('hi');
     const user = await this.userService.findByID(payload.id);
     return { ...user, password: undefined };
   }

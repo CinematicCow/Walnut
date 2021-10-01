@@ -20,12 +20,8 @@ export class AuthService {
   ) {}
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
-    const hashedPassword = bcrypt.hashSync(registerUserDto.password, 10);
     try {
-      const createdUser = await this.userService.create({
-        ...registerUserDto,
-        password: hashedPassword,
-      });
+      const createdUser = await this.userService.create(registerUserDto);
       return { ...createdUser, password: undefined };
     } catch (err) {
       throw new HttpException(
@@ -41,7 +37,7 @@ export class AuthService {
       await this.checkPassword(password, user.password);
       return { ...user, password: undefined };
     } catch (err) {
-      throw new UnauthorizedException('Invalid Credential');
+      throw new UnauthorizedException(err);
     }
   }
 
@@ -54,13 +50,10 @@ export class AuthService {
     return true;
   }
 
-  getCookieWithJwt(id: string) {
+  getToken(id: string) {
     const payload: TokenPayload = { id };
     const token = this.jwtService.sign(payload);
-    return `Authentication:${token}; HttpOnly; Max-Age:${process.env.JWT_SECRET_TIME}`;
-  }
-
-  getCookieForLogout() {
-    return `Authentication=;HttpOnly;Max-Age=0`;
+    // console.warn(token);
+    return token;
   }
 }
