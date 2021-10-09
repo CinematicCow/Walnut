@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -23,13 +24,12 @@ async function bootstrap() {
       'A sample api made by prajwal kakkar to get a better understanding of NestJS.',
     )
     .setVersion('1.0')
-    .addCookieAuth('Authentication')
+    .addCookieAuth('authJwt')
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('/', app, document);
+  SwaggerModule.setup('api', app, document);
 
-  app.use(cookieParser());
   await app.listen(3000);
 }
 bootstrap();

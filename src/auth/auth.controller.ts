@@ -20,7 +20,7 @@ import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { LocalAuthenticationGuard } from '../guard/local-auth.guard';
 import { RequestWithUser } from './interface/request-with-user.interface';
-import { JwtAuthenticationGuard } from 'src/guard/jwt-auth.guard';
+import JwtAuthenticationGuard from 'src/guard/jwt-auth.guard';
 import { LoginUserDto } from './dto/login-user.dto';
 
 @ApiTags('auth')
@@ -39,27 +39,31 @@ export class AuthController {
   @ApiOkResponse({ type: User })
   @UseGuards(LocalAuthenticationGuard)
   @Post('login')
-  async login(
-    @Req() req: RequestWithUser,
-    @Res() res: Response,
-  ): Promise<User> {
+  async login(@Req() req: RequestWithUser, @Res() res: Response) {
     const user = req.user;
-    const cookie = this.authService.getCookieWithJwt(user.id);
-    res.setHeader('Set-Cookie', cookie);
-    return { ...user, password: undefined };
+    // //(user);
+    const token = await this.authService.getToken(user.id);
+    const data = { ...user, password: undefined };
+    res
+      .cookie('authJwt', token, {
+        httpOnly: true,
+        maxAge: parseInt(process.env.JWT_SECRET_TIME) * 60,
+      })
+      .json(data);
   }
 
   @Post('logout')
   async logout(@Res() res: Response) {
-    const cookie = this.authService.getCookieForLogout();
-    res.setHeader('Set-Cookie', cookie);
+    res.clearCookie('authJwt');
     return res.sendStatus(200);
   }
 
   @UseGuards(JwtAuthenticationGuard)
   @Get()
-  auth(@Res() req: RequestWithUser) {
+  auth(@Req() req: RequestWithUser) {
+    //('auth controller');
     const user = req.user;
+    //(req.cookies.authJwt);
     return { ...user, password: undefined };
   }
 }
