@@ -20,7 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UpdateProductStockDto } from './dto/update-stock.dto';
-import { JwtAuthenticationGuard } from 'src/guard/jwt-auth.guard';
+import JwtAuthenticationGuard from 'src/guard/jwt-auth.guard';
 
 @ApiTags('product')
 @Controller('product')

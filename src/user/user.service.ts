@@ -31,7 +31,7 @@ export class UserService {
 
   async findByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { email } });
-    // console.log(`=== called from find by email ===`, { email, user });
+    // //(`=== called from find by email ===`, { email, user });
     if (!user) {
       throw new NotFoundException('User with this email does not exist');
     }

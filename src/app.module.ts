@@ -8,9 +8,11 @@ import { config } from '../ormconfig';
 import { CategoryModule } from './category/category.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     ProductModule,
     TypeOrmModule.forRoot(config),
     CategoryModule,

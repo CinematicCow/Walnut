@@ -50,10 +50,10 @@ export class AuthService {
     return true;
   }
 
-  getToken(id: string) {
+  async getToken(id: string) {
     const payload: TokenPayload = { id };
     const token = this.jwtService.sign(payload);
-    // console.warn(token);
+    //({ 'token-value': token });
     return token;
   }
 }
