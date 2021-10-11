@@ -43,13 +43,12 @@ export class AuthController {
     const user = req.user;
     // //(user);
     const token = await this.authService.getToken(user.id);
-    const data = { ...user, password: undefined };
     res
       .cookie('authJwt', token, {
         httpOnly: true,
         maxAge: parseInt(process.env.JWT_SECRET_TIME) * 60,
       })
-      .json(data);
+      .json({ user, token });
   }
 
   @Post('logout')
@@ -61,9 +60,7 @@ export class AuthController {
   @UseGuards(JwtAuthenticationGuard)
   @Get()
   auth(@Req() req: RequestWithUser) {
-    //('auth controller');
     const user = req.user;
-    //(req.cookies.authJwt);
     return { ...user, password: undefined };
   }
 }
