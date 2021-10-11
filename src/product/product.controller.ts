@@ -13,23 +13,21 @@ import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
-import {
-  ApiCookieAuth,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateProductStockDto } from './dto/update-stock.dto';
 import JwtAuthenticationGuard from 'src/guard/jwt-auth.guard';
+import { Roles } from 'src/decorator/role.decorator';
+import { Role } from 'src/user/entities/role.enum';
+import { RoleGuard } from 'src/guard/role.guard';
 
 @ApiTags('product')
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @ApiCookieAuth()
   @ApiCreatedResponse({ type: Product })
-  @UseGuards(JwtAuthenticationGuard)
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @Post()
   async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     return await this.productService.create(createProductDto);
