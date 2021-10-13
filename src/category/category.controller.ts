@@ -7,8 +7,12 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from 'src/decorator/role.decorator';
+import JwtAuthenticationGuard from 'src/guard/jwt-auth.guard';
+import { Role } from 'src/user/entities/role.enum';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -19,6 +23,9 @@ import { Category } from './entities/category.entity';
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthenticationGuard)
   @ApiCreatedResponse({ type: Category })
   @Post()
   async create(
@@ -39,6 +46,9 @@ export class CategoryController {
     return await this.categoryService.findOne(id);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthenticationGuard)
   @ApiCreatedResponse({ type: Boolean })
   @Patch(':id')
   update(
@@ -48,6 +58,9 @@ export class CategoryController {
     return this.categoryService.update(id, updateCategoryDto);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthenticationGuard)
   @ApiCreatedResponse({ type: Boolean })
   @Delete(':id')
   remove(@Param('id') id: string) {

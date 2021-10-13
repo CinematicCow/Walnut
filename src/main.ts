@@ -26,7 +26,7 @@ async function bootstrap() {
       'A sample api made by prajwal kakkar to get a better understanding of NestJS.',
     )
     .setVersion('1.0')
-    .addCookieAuth('authJwt')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
