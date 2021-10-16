@@ -1,5 +1,5 @@
-import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
@@ -18,13 +18,15 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
   const options = new DocumentBuilder()
     .setTitle('Sample-Api')
     .setDescription(
       'A sample api made by prajwal kakkar to get a better understanding of NestJS.',
     )
     .setVersion('1.0')
-    .addCookieAuth('authJwt')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, options);

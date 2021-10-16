@@ -7,6 +7,8 @@ import {
   Unique,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Role } from './role.enum';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 @Unique(['email'])
@@ -28,10 +30,15 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
+  @ApiProperty({ required: false })
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
+  roles?: Role;
+
   @BeforeInsert()
-  hashPassword?() {
+  private hashPassword?() {
     this.password = bcrypt.hashSync(this.password, 10);
   }
 }

@@ -14,22 +14,26 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import {
-  ApiCookieAuth,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { UpdateProductStockDto } from './dto/update-stock.dto';
 import JwtAuthenticationGuard from 'src/guard/jwt-auth.guard';
+import { Roles } from 'src/decorator/role.decorator';
+import { Role } from 'src/user/entities/role.enum';
+import { RoleGuard } from 'src/guard/role.guard';
 
 @ApiTags('product')
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @ApiCookieAuth()
+  @ApiBearerAuth()
   @ApiCreatedResponse({ type: Product })
-  @UseGuards(JwtAuthenticationGuard)
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @Post()
   async create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     return await this.productService.create(createProductDto);
@@ -47,6 +51,9 @@ export class ProductController {
     return await this.productService.findOne(id);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthenticationGuard)
   @ApiCreatedResponse({ type: Boolean })
   @Patch(':id')
   async update(
@@ -56,12 +63,18 @@ export class ProductController {
     return await this.productService.update(id, updateProductDto);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthenticationGuard)
   @ApiOkResponse({ type: Boolean })
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<boolean> {
     return await this.productService.remove(id);
   }
 
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthenticationGuard)
   @ApiOkResponse({ type: Boolean })
   @Patch('update-stock/:id')
   async updateStock(

@@ -22,7 +22,7 @@ export class AuthService {
   async register(registerUserDto: RegisterUserDto): Promise<User> {
     try {
       const createdUser = await this.userService.create(registerUserDto);
-      return { ...createdUser, password: undefined };
+      return createdUser;
     } catch (err) {
       throw new HttpException(
         'Something went wrong',
@@ -35,7 +35,7 @@ export class AuthService {
     try {
       const user = await this.userService.findByEmail(email);
       await this.checkPassword(password, user.password);
-      return { ...user, password: undefined };
+      return user;
     } catch (err) {
       throw new UnauthorizedException(err);
     }
