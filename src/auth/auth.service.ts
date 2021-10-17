@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
@@ -13,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './interface/token.interface';
 import { MailService } from 'src/mail/mail.service';
 import { v4 } from 'uuid';
+import { redisEmailToken } from 'src/common/redis';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +33,7 @@ export class AuthService {
         createdUser,
         verificationToken,
       );
+      await redisEmailToken.set(verificationToken, createdUser.id);
       return createdUser;
     } catch (err) {
       throw new HttpException(
@@ -63,5 +67,21 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
     //({ 'token-value': token });
     return token;
+  }
+
+  async verifyUser(token: string) {
+    if (!token) throw new BadRequestException('Invalid token provided');
+
+    const id = await redisEmailToken.get(token);
+
+    if (!id) throw new BadRequestException('Invalid token provided');
+
+    try {
+      await this.userService.update(id, { isVerified: true });
+    } catch (err) {
+      throw new InternalServerErrorException('Something went wrong');
+    }
+    await redisEmailToken.del(token);
+    return { code: 200, message: 'User verified' };
   }
 }

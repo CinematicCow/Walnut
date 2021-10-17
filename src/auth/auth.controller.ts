@@ -1,12 +1,15 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpCode,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -24,6 +27,7 @@ import JwtAuthenticationGuard from 'src/guard/jwt-auth.guard';
 import { LoginUserDto } from './dto/login-user.dto';
 
 @ApiTags('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -62,5 +66,10 @@ export class AuthController {
   auth(@Req() req: RequestWithUser) {
     const user = req.user;
     return { ...user, password: undefined };
+  }
+
+  @Get('confirm')
+  async verify(@Query('token') token: string) {
+    return await this.authService.verifyUser(token);
   }
 }
