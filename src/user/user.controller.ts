@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,6 +15,7 @@ import JwtAuthenticationGuard from 'src/guard/jwt-auth.guard';
 import { RoleGuard } from 'src/guard/role.guard';
 import { Roles } from 'src/decorator/role.decorator';
 import { Role } from './entities/role.enum';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('user')
 @ApiBearerAuth()
@@ -36,6 +38,11 @@ export class UserController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findByID(id);
+  }
+
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
