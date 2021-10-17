@@ -11,17 +11,25 @@ import * as bcrypt from 'bcrypt';
 // import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './interface/token.interface';
+import { MailService } from 'src/mail/mail.service';
+import { v4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
     try {
       const createdUser = await this.userService.create(registerUserDto);
+      const verificationToken = v4();
+      await this.mailService.sendUserConfirmationMail(
+        createdUser,
+        verificationToken,
+      );
       return createdUser;
     } catch (err) {
       throw new HttpException(
