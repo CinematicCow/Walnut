@@ -29,6 +29,10 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @ApiProperty({ nullable: true, default: false })
+  @Column({ name: 'verified', default: false, type: Boolean })
+  isVerified?: boolean;
+
   @Column()
   @Exclude()
   password: string;
