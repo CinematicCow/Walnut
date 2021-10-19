@@ -15,11 +15,14 @@ import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from './interface/token.interface';
 import { MailService } from 'src/mail/mail.service';
 import { v4 } from 'uuid';
-import { redisEmailToken } from 'src/common/redis';
+// import { redisEmailToken } from 'src/common/redis';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRedis() private readonly emailRedisClient: Redis,
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
@@ -33,13 +36,10 @@ export class AuthService {
         createdUser,
         verificationToken,
       );
-      await redisEmailToken.set(verificationToken, createdUser.id);
+      await this.emailRedisClient.set(verificationToken, createdUser.id);
       return createdUser;
     } catch (err) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -72,7 +72,7 @@ export class AuthService {
   async verifyUser(token: string) {
     if (!token) throw new BadRequestException('Invalid token provided');
 
-    const id = await redisEmailToken.get(token);
+    const id = await this.emailRedisClient.get(token);
 
     if (!id) throw new BadRequestException('Invalid token provided');
 
@@ -81,7 +81,7 @@ export class AuthService {
     } catch (err) {
       throw new InternalServerErrorException('Something went wrong');
     }
-    await redisEmailToken.del(token);
+    await this.emailRedisClient.del(token);
     return { code: 200, message: 'User verified' };
   }
 }
