@@ -10,6 +10,7 @@ import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { UploadModule } from './upload/upload.module';
 import { MailModule } from './mail/mail.module';
+import { CustomRedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MailModule } from './mail/mail.module';
     HealthModule,
     UploadModule,
     MailModule,
+    CustomRedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
