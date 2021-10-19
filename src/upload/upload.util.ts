@@ -2,7 +2,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { extname } from 'path';
 
 export const imageFilter = (req, file, callback) => {
-  if (file.originalname.match('/.(jpg|jpeg|png|gif)$/')) {
+  if (!file.originalname.match('/.(jpg|jpeg|png|gif)$/')) {
     return callback(
       new HttpException('Only image files allowed', HttpStatus.BAD_REQUEST),
     );
@@ -10,8 +10,9 @@ export const imageFilter = (req, file, callback) => {
   return callback(null, true);
 };
 
-export const textFileFilter = (req, file, callback) => {
-  if (file.originalname.match('/.(txt)$/')) {
+export const textFileFilter = (req, file: Express.Multer.File, callback) => {
+  // const validExtension = /\.txt$/i.test(file.originalname);
+  if (!/\.txt$/i.test(file.originalname)) {
     return callback(
       new HttpException('Only text files allowed', HttpStatus.BAD_REQUEST),
     );
