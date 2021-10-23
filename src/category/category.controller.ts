@@ -12,6 +12,7 @@ import {
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/decorator/role.decorator';
 import JwtAuthenticationGuard from 'src/guard/jwt-auth.guard';
+import { RoleGuard } from 'src/guard/role.guard';
 import { Role } from 'src/user/entities/role.enum';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -25,7 +26,7 @@ export class CategoryController {
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @ApiCreatedResponse({ type: Category })
   @Post()
   async create(
@@ -48,7 +49,7 @@ export class CategoryController {
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @ApiCreatedResponse({ type: Boolean })
   @Patch(':id')
   update(
@@ -60,7 +61,7 @@ export class CategoryController {
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @ApiCreatedResponse({ type: Boolean })
   @Delete(':id')
   remove(@Param('id') id: string) {
