@@ -76,13 +76,13 @@ export class UploadController {
     return await this.uploadService.createFile(file);
   }
 
-  @Get('image/:imgpath')
-  sendUploadedImage(@Param('imgpath') image: string, @Res() res: Response) {
+  @Get('image/:imageName')
+  sendUploadedImage(@Param('imageName') image: string, @Res() res: Response) {
     return res.sendFile(image, { root: './uploads/images' });
   }
 
-  @Get('file/:filepath')
-  sendUploadedFile(@Param('filepath') file: string, @Res() res: Response) {
+  @Get('file/:fileName')
+  sendUploadedFile(@Param('fileName') file: string, @Res() res: Response) {
     return res.sendFile(file, { root: './uploads/files' });
   }
 }

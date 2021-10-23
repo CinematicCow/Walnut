@@ -19,6 +19,9 @@ export class UploadService {
     file.fileName = fileDto.filename;
     file.fileType = fileDto.mimetype;
     file.size = formatBytes(fileDto.size);
+    file.path = `/uploads/${
+      file.fileType.includes('image') ? 'images' : 'files'
+    }/${file.fileName}`;
 
     await this.fileRepository.save(file);
 

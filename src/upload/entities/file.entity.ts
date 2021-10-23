@@ -32,6 +32,10 @@ export class File {
   @Column()
   size: string;
 
+  @ApiProperty()
+  @Column()
+  path: string;
+
   @ApiProperty({ required: false })
   @CreateDateColumn({
     type: 'timestamptz',
