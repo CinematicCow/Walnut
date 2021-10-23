@@ -12,6 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
   ApiOkResponse,
@@ -61,6 +62,7 @@ export class AuthController {
     return res.sendStatus(200);
   }
 
+  @ApiBearerAuth()
   @UseGuards(JwtAuthenticationGuard)
   @Get()
   auth(@Req() req: RequestWithUser) {

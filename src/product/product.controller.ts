@@ -53,7 +53,7 @@ export class ProductController {
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @ApiCreatedResponse({ type: Boolean })
   @Patch(':id')
   async update(
@@ -65,7 +65,7 @@ export class ProductController {
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @ApiOkResponse({ type: Boolean })
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<boolean> {
@@ -74,7 +74,7 @@ export class ProductController {
 
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
-  @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtAuthenticationGuard, RoleGuard)
   @ApiOkResponse({ type: Boolean })
   @Patch('update-stock/:id')
   async updateStock(
