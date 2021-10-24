@@ -46,9 +46,15 @@ export class ProductController {
   }
 
   @ApiOkResponse({ type: Product })
-  @Get(':id')
+  @Get('id/:id')
   async findOne(@Param('id') id: string): Promise<Product> {
     return await this.productService.findOne(id);
+  }
+
+  @ApiOkResponse({ type: Product })
+  @Get(':slug')
+  async findBySlug(@Param('slug') slug: string) {
+    return await this.productService.findOneBySlug(slug);
   }
 
   @ApiBearerAuth()

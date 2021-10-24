@@ -17,6 +17,10 @@ export class Product {
   id: string;
 
   @ApiProperty()
+  @Column({ nullable: true })
+  slug: string;
+
+  @ApiProperty()
   @Column()
   name: string;
 
